@@ -1,0 +1,2432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub - Ultimate Gaming Store</title>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Game Hub Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: radial-gradient(circle at top, rgb(27, 27, 58), rgb(5, 5, 16));
+            color: white;
+            overflow: hidden;
+        }
+
+        :root {
+            --primary: rgb(108, 92, 231);
+            --secondary: rgb(162, 155, 254);
+            --dark: rgb(15, 15, 35);
+            --darker: rgb(10, 10, 26);
+            --light: rgb(245, 245, 245);
+            --gray: rgb(45, 45, 68);
+            --light-gray: rgb(58, 58, 82);
+            --success: rgb(0, 184, 148);
+            --warning: rgb(253, 203, 110);
+            --danger: rgb(232, 67, 147);
+            --info: rgb(9, 132, 227);
+            --library: rgb(0, 206, 201);
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--darker);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-info span {
+            color: var(--secondary);
+        }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-icon:hover {
+            background-color: var(--gray);
+        }
+
+        .cart-count, .library-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .library-count {
+            background-color: var(--library);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--darker);
+            padding: 1.5rem;
+            border-right: 1px solid var(--gray);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-section h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-item:hover {
+            background-color: var(--gray);
+        }
+
+        .sidebar-item.active {
+            background-color: var(--primary);
+        }
+
+        .sidebar-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Display Area */
+        .content-area {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .page-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--secondary);
+        }
+
+        /* Enhanced Auth Forms */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .auth-form-wrapper {
+            position: relative;
+            display: flex;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 800px;
+            background: linear-gradient(14deg, rgba(2, 0, 36, 0.8) 0%, rgba(24, 24, 65, 0.7) 66%, 
+                        rgb(20, 76, 99) 100%), radial-gradient(circle, rgba(2, 0, 36, 0.5) 0%, 
+                        rgba(32, 15, 53, 0.2) 65%, rgba(14, 29, 28, 0.9) 100%);
+            border: 2px solid var(--primary);
+            box-shadow: rgba(108, 92, 231, 0.8) 0px 0px 50px -15px;
+            overflow: hidden;
+            z-index: 1;
+            border-radius: 10px;
+        }
+
+        .form-section {
+            flex: 1;
+            padding: 1.5rem;
+            min-width: 300px;
+        }
+
+        /* Form Header */
+        .form-title {
+            font-size: 1.5rem;
+            line-height: 1.75rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            text-align: center;
+            color: #fff;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
+            animation-duration: 1.5s;
+            overflow: hidden;
+            transition: .12s;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-title span {
+            animation: flickering 2s linear infinite both;
+        }
+
+        .title-2 {
+            display: block;
+            margin-top: -0.5rem;
+            font-size: 2.1rem;
+            font-weight: 800;
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            -webkit-text-stroke: #fff 0.1rem;
+            letter-spacing: 0.2rem;
+            color: transparent;
+            position: relative;
+            text-shadow: 0px 0px 16px rgb(206, 206, 206);
+            margin-bottom: 1.5rem;
+        }
+
+        @keyframes flickering {
+            0%, 100% { opacity: 1; }
+            42% { opacity: 0; }
+            43% { opacity: 0; }
+            43.01% { opacity: 1; }
+            48% { opacity: 0; }
+            49% { opacity: 0; }
+            49.01% { opacity: 1; }
+        }
+
+        /* Input and submit section */
+        .input-container {
+            position: relative;
+            margin-bottom: 1.2rem;
+        }
+
+        .input-container input {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 12px;
+            font-size: 0.95rem;
+            width: 100%;
+            border-radius: 5px;
+            color: var(--dark);
+            transition: all 0.3s;
+            border: 2px solid rgb(255, 255, 255);
+            outline: none;
+        }
+
+        .input-container input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+        }
+
+        .input-error {
+            border-color: var(--danger) !important;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+
+        .submit {
+            display: block;
+            padding: 12px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: rgb(255, 255, 255);
+            font-size: 0.95rem;
+            font-weight: 600;
+            width: 100%;
+            text-transform: uppercase;
+            border-radius: 5px;
+            margin-top: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            outline: none;
+        }
+
+        .submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 4px 5px 17px -4px rgb(255, 255, 255);
+        }
+
+        /* Signup section */
+        .signup-link {
+            color: rgb(192, 192, 192);
+            font-size: 0.875rem;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            margin-top: 1.5rem;
+        }
+
+        .signup-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Shooting stars */
+        .bg-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            animation: animateBg 50s linear infinite;
+        }
+
+        @keyframes animateBg {
+            0%,100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.1),0 0 0 8px rgba(255,255,255,0.1),0 0 20px rgba(255,255,255,0.1);
+            animation: animate 3s linear infinite;
+        }
+
+        .star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 300px;
+            height: 1px;
+            background: linear-gradient(90deg,#fff,transparent);
+        }
+
+        @keyframes animate {
+            0% { transform: rotate(315deg) translateX(0); opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: rotate(315deg) translateX(-1000px); opacity: 0; }
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .game-card {
+            background-color: var(--darker);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--gray);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Game Images */
+        .game-img {
+            height: 160px;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+            z-index: 1;
+        }
+
+        .game-info {
+            padding: 1.2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            height: 2.5rem;
+            overflow: hidden;
+        }
+
+        .game-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .game-price.free {
+            color: var(--success);
+        }
+
+        .game-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .game-tag {
+            padding: 0.3rem 0.7rem;
+            background-color: var(--gray);
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .game-tag.new { background-color: var(--info); }
+        .game-tag.upcoming { background-color: var(--warning); color: var(--dark); }
+        .game-tag.discount { background-color: var(--danger); }
+        .game-tag.owned { background-color: var(--library); }
+
+        /* Expandable Details Section - No Arrow */
+        .details-section {
+            margin: 10px 0;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .details-header {
+            background-color: var(--gray);
+            padding: 8px 12px;
+            font-weight: 500;
+            color: var(--secondary);
+            transition: background-color 0.3s;
+        }
+        
+        .details-header:hover {
+            background-color: var(--light-gray);
+        }
+        
+        .details-content {
+            max-height: 0;
+            padding: 0 12px;
+            background-color: rgba(0, 0, 0, 0.3);
+            transition: max-height 0.4s ease-out, padding 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .details-content.show {
+            max-height: 200px;
+            padding: 12px;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            width: 80px;
+            color: var(--secondary);
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: var(--light);
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .btn {
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: rgb(90, 79, 207);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--light);
+            border: 1px solid var(--light-gray);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--light-gray);
+        }
+
+        .btn-disabled {
+            background-color: var(--gray);
+            color: var(--light-gray);
+            cursor: not-allowed;
+        }
+
+        .btn-library {
+            background-color: var(--library);
+            color: white;
+        }
+
+        .btn-library:hover {
+            background-color: rgb(0, 181, 178);
+        }
+
+        /* Cart & Library Display */
+        .cart-items, .library-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .cart-item, .library-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--darker);
+            border-radius: 10px;
+            border: 1px solid var(--gray);
+        }
+
+        /* Cart & Library Item Images */
+        .cart-item-img, .library-item-img {
+            width: 100px;
+            height: 70px;
+            border-radius: 5px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cart-item-img::before, .library-item-img::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.4));
+            z-index: 1;
+        }
+
+        .cart-item-info, .library-item-info {
+            flex: 1;
+        }
+
+        .cart-item-title, .library-item-title {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-item-price, .library-item-price {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        /* Summary Sections */
+        .cart-summary, .library-summary {
+            background-color: var(--darker);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--gray);
+            margin-top: auto;
+            width: 100%;
+        }
+
+        .cart-total, .library-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-total-amount, .library-total-amount {
+            color: var(--primary);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background-color: rgb(0, 160, 133);
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--light-gray);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .empty-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--gray);
+        }
+
+        /* Payment Options */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex: 1;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: var(--darker);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: 1px solid var(--gray);
+        }
+
+        .payment-method:hover {
+            background-color: var(--gray);
+        }
+
+        .payment-method.selected {
+            background-color: var(--gray);
+            border: 2px solid var(--primary);
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .payment-info h4 {
+            margin-bottom: 0.3rem;
+        }
+
+        .payment-info p {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+
+        .payment-form {
+            background-color: var(--darker);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid var(--gray);
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        /* Account Management */
+        .account-info {
+            background-color: var(--darker);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid var(--gray);
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            width: 150px;
+            color: var(--secondary);
+        }
+
+        .info-value {
+            flex: 1;
+            color: var(--light);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 5px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .notification.success {
+            background-color: var(--success);
+        }
+
+        .notification.error {
+            background-color: var(--danger);
+        }
+
+        .notification.warning {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+
+        .notification.info {
+            background-color: var(--info);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Error Modal */
+        .error-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .error-content {
+            background-color: var(--darker);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid var(--danger);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .error-content h3 {
+            color: var(--danger);
+            margin-bottom: 1rem;
+        }
+
+        .error-content p {
+            margin-bottom: 1.5rem;
+            color: var(--light);
+        }
+
+        .error-close {
+            padding: 0.5rem 1.5rem;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .error-close:hover {
+            background-color: rgb(214, 48, 115);
+        }
+
+        /* Coming Soon Badge for Upcoming Games */
+        .coming-soon {
+            display: inline-block;
+            padding: 0.3rem 0.7rem;
+            background: linear-gradient(45deg, var(--warning), rgb(255, 159, 67));
+            color: var(--dark);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Tab Navigation for Auth Forms */
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            color: var(--light);
+            cursor: pointer;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .auth-tab:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-content { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--gray);
+                overflow-x: auto;
+                display: flex;
+                flex-wrap: nowrap;
+            }
+            .sidebar-section {
+                margin-bottom: 0;
+                margin-right: 2rem;
+                flex-shrink: 0;
+            }
+            .auth-form-wrapper {
+                flex-direction: column;
+                max-width: 500px;
+            }
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .games-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+            .user-info { flex-direction: column; align-items: flex-end; gap: 0.5rem; }
+            .game-actions { flex-direction: column; }
+            .auth-form-wrapper { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Game Hub Application -->
+    <div class="game-hub" id="gameHub" style="display: flex;">
+        <div class="container">
+            <!-- Header -->
+            <header>
+                <div class="logo" id="logo">
+                    <i class="bi bi-controller"></i>
+                    <h1>Game Hub</h1>
+                </div>
+                
+                <div class="user-info">
+                    <span id="userDisplay">Welcome to Game Hub!</span>
+                    <div class="nav-controls">
+                        <div class="nav-icon library-icon" id="libraryIcon" title="My Library" style="display: none;">
+                            <i class="bi bi-book"></i>
+                            <span class="library-count">0</span>
+                        </div>
+                        <div class="nav-icon cart-icon" id="cartIcon" title="Shopping Cart" style="display: none;">
+                            <i class="bi bi-cart"></i>
+                            <span class="cart-count">0</span>
+                        </div>
+                        <button class="btn btn-primary" id="logoutButton" style="display: none;">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <div class="sidebar-section" id="authSection">
+                        <h3>Authentication</h3>
+                        <div class="sidebar-item active" data-page="login">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Login / Register</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Store Section - Hidden when not logged in -->
+                    <div class="sidebar-section" id="storeSection" style="display: none;">
+                        <h3>Game Store</h3>
+                        <div class="sidebar-item" data-page="allGames">
+                            <i class="bi bi-controller"></i>
+                            <span>All Games</span>
+                        </div>
+                        <div class="sidebar-item" data-page="freeGames">
+                            <i class="bi bi-gift"></i>
+                            <span>Free Games</span>
+                        </div>
+                        <div class="sidebar-item" data-page="newGames">
+                            <i class="bi bi-star"></i>
+                            <span>New Releases</span>
+                        </div>
+                        <div class="sidebar-item" data-page="upcomingGames">
+                            <i class="bi bi-calendar"></i>
+                            <span>Upcoming Games</span>
+                        </div>
+                        <div class="sidebar-item" data-page="discountGames">
+                            <i class="bi bi-tag"></i>
+                            <span>Discount Games</span>
+                        </div>
+                    </div>
+                    
+                    <!-- User Section - Hidden when not logged in -->
+                    <div class="sidebar-section" id="userSection" style="display: none;">
+                        <h3>My Account</h3>
+                        <div class="sidebar-item" data-page="library">
+                            <i class="bi bi-book"></i>
+                            <span>My Library</span>
+                        </div>
+                        <div class="sidebar-item" data-page="cart">
+                            <i class="bi bi-cart"></i>
+                            <span>Shopping Cart</span>
+                        </div>
+                        <div class="sidebar-item" data-page="payment">
+                            <i class="bi bi-credit-card"></i>
+                            <span>Payment</span>
+                        </div>
+                        <div class="sidebar-item" data-page="account">
+                            <i class="bi bi-person"></i>
+                            <span>Account Info</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="content-area">
+                    <!-- Login/Register Page -->
+                    <div class="page active" id="loginPage">
+                        <div class="auth-container">
+                            <div class="auth-form-wrapper">
+                                <!-- Shooting Stars Background -->
+                                <div class="bg-stars">
+                                    <span class="star"></span>
+                                    <span class="star"></span>
+                                    <span class="star"></span>
+                                    <span class="star"></span>
+                                </div>
+                                
+                                <!-- Tab Navigation -->
+                                <div class="auth-tabs">
+                                    <button class="auth-tab active" id="loginTab">Login</button>
+                                    <button class="auth-tab" id="registerTab">Register</button>
+                                </div>
+                                
+                                <!-- Login Form Section -->
+                                <div class="form-section" id="loginFormSection">
+                                    <h2 class="form-title"><span>Welcome Back</span></h2>
+                                    <div class="title-2"><span>LOGIN</span></div>
+                                    
+                                    <div class="input-container">
+                                        <input type="text" id="loginEmail" class="input-mail" placeholder="Email or Phone Number" required>
+                                        <div class="error-message" id="loginEmailError"></div>
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <input type="password" id="loginPassword" class="input-pwd" placeholder="Password" required>
+                                        <div class="error-message" id="loginPasswordError"></div>
+                                    </div>
+                                    
+                                    <button class="submit" id="loginBtn">Login</button>
+                                    
+                                    <div class="signup-link">
+                                        Don't have an account? <a href="#" id="switchToRegister" class="up">Register Here</a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Register Form Section -->
+                                <div class="form-section" id="registerFormSection" style="display: none;">
+                                    <h2 class="form-title"><span>Join Us</span></h2>
+                                    <div class="title-2"><span>REGISTER</span></div>
+                                    
+                                    <div class="input-container">
+                                        <input type="text" id="registerName" class="input-name" placeholder="Full Name" required>
+                                        <div class="error-message" id="registerNameError"></div>
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <input type="email" id="registerEmail" class="input-mail" placeholder="Email Address" required>
+                                        <div class="error-message" id="registerEmailError"></div>
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <input type="tel" id="registerPhone" class="input-phone" placeholder="Phone Number (Optional)">
+                                        <div class="error-message" id="registerPhoneError"></div>
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <input type="password" id="registerPassword" class="input-pwd" placeholder="Password (Min 8 chars, 1 digit, 1 special)" required>
+                                        <div class="error-message" id="registerPasswordError"></div>
+                                    </div>
+                                    
+                                    <div class="input-container">
+                                        <input type="password" id="registerConfirmPassword" class="input-pwd" placeholder="Confirm Password" required>
+                                        <div class="error-message" id="registerConfirmPasswordError"></div>
+                                    </div>
+                                    
+                                    <button class="submit" id="registerBtn">Create Account</button>
+                                    
+                                    <div class="signup-link">
+                                        Already have an account? <a href="#" id="switchToLogin" class="up">Login Here</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All Games Page -->
+                    <div class="page" id="allGamesPage">
+                        <div class="page-header">
+                            <h2>All Games</h2>
+                            <p>Browse our complete collection of games</p>
+                        </div>
+                        <div class="games-grid" id="allGamesGrid"></div>
+                    </div>
+
+                    <!-- Free Games Page -->
+                    <div class="page" id="freeGamesPage">
+                        <div class="page-header">
+                            <h2>Free Games</h2>
+                            <p>Enjoy these amazing games for free!</p>
+                        </div>
+                        <div class="games-grid" id="freeGamesGrid"></div>
+                    </div>
+
+                    <!-- New Games Page -->
+                    <div class="page" id="newGamesPage">
+                        <div class="page-header">
+                            <h2>New Releases</h2>
+                            <p>Check out the latest games</p>
+                        </div>
+                        <div class="games-grid" id="newGamesGrid"></div>
+                    </div>
+
+                    <!-- Upcoming Games Page -->
+                    <div class="page" id="upcomingGamesPage">
+                        <div class="page-header">
+                            <h2>Upcoming Games</h2>
+                            <p>Games that will be released soon - Coming soon!</p>
+                        </div>
+                        <div class="games-grid" id="upcomingGamesGrid"></div>
+                    </div>
+
+                    <!-- Discount Games Page -->
+                    <div class="page" id="discountGamesPage">
+                        <div class="page-header">
+                            <h2>Discount Games</h2>
+                            <p>Games with special discounts</p>
+                        </div>
+                        <div class="games-grid" id="discountGamesGrid"></div>
+                    </div>
+
+                    <!-- Library Page -->
+                    <div class="page" id="libraryPage">
+                        <div class="page-header">
+                            <h2>My Library</h2>
+                            <p>Your purchased games collection</p>
+                        </div>
+                        <div class="library-items" id="libraryItems"></div>
+                        <div class="library-summary" id="librarySummary">
+                            <div class="library-total">
+                                <span>Total Games:</span>
+                                <span class="library-total-amount" id="libraryTotal">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cart Page -->
+                    <div class="page" id="cartPage">
+                        <div class="page-header">
+                            <h2>Shopping Cart</h2>
+                            <p>Review your selected games</p>
+                        </div>
+                        <div class="cart-items" id="cartItems"></div>
+                        <div class="cart-summary" id="cartSummary">
+                            <div class="cart-total">
+                                <span>Total:</span>
+                                <span class="cart-total-amount">₹0.00</span>
+                            </div>
+                            <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+                        </div>
+                    </div>
+
+                    <!-- Payment Page -->
+                    <div class="page" id="paymentPage">
+                        <div class="page-header">
+                            <h2>Payment</h2>
+                            <p>Complete your purchase</p>
+                        </div>
+                        <div id="paymentDetails"></div>
+                        <div class="payment-methods" id="paymentMethods">
+                            <div class="payment-method" data-method="upi">
+                                <div class="payment-icon">
+                                    <i class="bi bi-phone"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <h4>UPI Payment</h4>
+                                    <p>Pay using UPI apps like Google Pay, PhonePe, Paytm</p>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-method" data-method="credit">
+                                <div class="payment-icon">
+                                    <i class="bi bi-credit-card"></i>
+                                </div>
+                                <div class="payment-info">
+                                    <h4>Credit/Debit Card</h4>
+                                    <p>Pay using your Visa, MasterCard, or RuPay card</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="payment-form" id="paymentForm" style="display: none;"></div>
+                    </div>
+
+                    <!-- Account Page -->
+                    <div class="page" id="accountPage">
+                        <div class="page-header">
+                            <h2>Account Information</h2>
+                            <p>View your account details</p>
+                        </div>
+                        <div class="account-info" id="accountInfo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="error-modal" id="errorModal">
+        <div class="error-content">
+            <h3 id="errorTitle">Error</h3>
+            <p id="errorMessage">An error occurred. Please try again.</p>
+            <button class="error-close" id="errorClose">Close</button>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <script>
+        // Game Data - Updated with real games and added type/size for details
+        const games = [
+            { id: 1,title: "Black Myth: Wukong",priceUSD: 59.99,category: "new",tags: ["New", "Action", "RPG"],image: "image/Black Myth Wukong.jpg",isFree: false, discount: 0,description: "Action RPG based on Chinese mythology",releaseDate: "2024",type: "Action RPG",size: "85 GB"},
+            { id: 2,title: "Call of Duty: Modern Warfare III", priceUSD: 69.99, category: "new",tags: ["New", "FPS", "Action"],image: "image/Call of Duty Modern Warfare III.jpg",isFree: false,discount: 10,description: "First-person shooter military game",releaseDate: "2023",type: "FPS",size: "120 GB"},
+            { id: 3,title: "Red Dead Redemption 2",priceUSD: 59.99,category: "action",tags: ["Action", "Open World", "Adventure"],image: "image/Red Dead Redemption 2.jpg",isFree: false,discount: 20,description: "Western-themed action-adventure game",releaseDate: "2018",type: "Action-Adventure",size: "112 GB"},
+            { id: 4, title: "Grand Theft Auto V", priceUSD: 29.99, category: "action", tags: ["Action", "Open World", "Crime"], image: "image/gta5.jpg",isFree: false, discount: 40,description: "Open world action-adventure game",releaseDate: "2013",type: "Action",size: "95 GB"},
+            { id: 5, title: "PUBG: BATTLEGROUNDS", priceUSD: 0, category: "free", tags: ["Free", "Battle Royale", "Multiplayer"], image: "image/PUBG.jpg",isFree: true, discount: 0,description: "Battle royale shooter game",releaseDate: "2017",type: "Battle Royale",size: "35 GB"},
+            { id: 6, title: "The Witcher 3: Wild Hunt", priceUSD: 39.99, category: "rpg", tags: ["RPG", "Fantasy", "Adventure"], image: "image/The Witcher 3 Wild Hunt.jpg",isFree: false, discount: 30,description: "Fantasy action role-playing game",releaseDate: "2015",type:"RPG" ,size:"50 GB"},
+            { id :7,title:"Microsoft Flight Simulator" ,priceUSD :59.99 ,category:"simulation" ,tags:["Simulation","Flight"] ,image:"image/Microsoft Flight Simulator.jpg" ,isFree:false ,discount :15 ,description:"Aircraft flight simulation game" ,releaseDate:"2020" ,type:"Simulation" ,size:"150 GB"},
+            { id: 8, title: "Minecraft", priceUSD: 26.95, category: "sandbox", tags: ["Sandbox", "Survival", "Creative"], image: "image/Minecraft.jpg",isFree: false, discount: 0,description: "Sandbox survival game",releaseDate: "2011",type: "Sandbox",size: "1 GB"},
+            { id: 9, title: "eFootball 2025", priceUSD: 0, category: "free", tags: ["Free", "Sports", "Football"], image: "image/eFootball 2025.jpg",isFree: true,discount: 0,description: "Football simulation game",releaseDate: "2024",type: "Sports",size: "40 GB"},
+            { id: 10, title: "Chained Together", priceUSD: 9.99, category: "new", tags: ["New", "Co-op", "Puzzle"], image: "image/Chained Together.jpg",isFree: false, discount: 0,description: "Cooperative puzzle platformer",releaseDate: "2024",type: "Puzzle",size: "8 GB"},
+            { id: 11, title: "Hitman: Absolution", priceUSD: 19.99, category: "action", tags: ["Action", "Stealth", "Adventure"], image:"image/Hitman.jpg" ,isFree:false ,discount :50 ,description:"Stealth action game" ,releaseDate:"2012" ,type:"Stealth" ,size:"25 GB"},
+            { id :12,title:"Euro Truck Simulator 2" ,priceUSD :19.99 ,category:"simulation" ,tags:["Simulation","Driving","Open World"] ,image:"image/Euro Truck Simulator 2.jpg" ,isFree:false ,discount :25 ,description:"Truck driving simulation game" ,releaseDate:"2012" ,type:"Simulation" ,size:"12 GB"},
+            { id :13,title:"Farming Simulator 22" ,priceUSD :39.99 ,category:"simulation" ,tags:["Simulation","Farming","Management"] ,image:"image/Farming Simulator 22.jpg" ,isFree:false ,discount :20 ,description:"Farming simulation game" ,releaseDate:"2021" ,type:"Simulation" ,size:"20 GB"},
+            { id :14,title:"Bus Simulator 21" ,priceUSD :34.99 ,category:"simulation" ,tags:["Simulation","Driving","Bus"] ,image:"image/Bus Simulator 21.jpg" ,isFree:false, discount :15, description :"Bus driving simulation game ", releaseDate :"2021 ", type :"Simulation ", size :"15 GB"},
+            { id :15,title :"Train Simulator Classic ", priceUSD :29.99, category :"simulation ", tags:["Simulation","Trains","Driving"], image :"image/Train Simulator Classic.jpg ", isFree:false, discount :30, description :"Train driving simulation ", releaseDate :"2009 ", type :"Simulation ", size :"30 GB"},
+            { id :16,title :"Ship Simulator Extremes ", priceUSD :19.99, category :"simulation ", tags:["Simulation","Ships","Boating"], image :"image/Ship Simulator Extremes.jpg ", isFree:false, discount :40, description :"Ship navigation simulation ", releaseDate :"2010 ", type :"Simulation ", size :"8 GB"},
+            { id :17,title :"DRL Drone Racing League Simulator ", priceUSD :24.99, category :"simulation ", tags:["Simulation","Racing","Drones"], image :"image/DRL Drone Racing League Simulator.jpg ", isFree:false, discount :10, description :"Drone racing simulation ", releaseDate :"2022 ", type :"Simulation ", size :"10 GB"},
+            { id: 18, title: "GRID Autosport", priceUSD: 9.99, category: "racing", tags: ["Racing", "Sports", "Cars"], image: "image/GRID Autosport.jpg",isFree: false, discount: 60,description: "Racing game for Android",releaseDate: "2019",type: "Racing",size: "18 GB"},
+            { id: 19, title: "Fast Food Simulator 2025", priceUSD: 14.99, category: "upcoming", tags: ["Upcoming", "Simulation", "Food"], image: "image/Fast Food Simulator.jpg",isFree: false, discount: 0,description: "Fast food restaurant simulation",releaseDate: "2025",type: "Simulation",size: "12 GB"},
+            { id: 20, title: "Super Bike Racing", priceUSD: 29.99, category: "racing", tags: ["Racing", "Motorcycle", "Sports"], image: "image/Super Bike Racing.jpg",isFree: false, discount: 20,description: "Motorcycle racing game",releaseDate: "2023",type: "Racing",size: "22 GB"},
+            { id: 21, title: "Rims Racing", priceUSD: 39.99, category: "racing", tags: ["Racing", "Motorcycle", "Simulation"], image: "image/Rims Racing.jpg",isFree: false, discount: 25,description: "Motorcycle racing simulation",releaseDate: "2021",type: "Racing",size: "35 GB"},
+            { id: 22, title: "Cyber Task", priceUSD: 19.99, category: "new", tags: ["New", "Stealth", "Action"], image:"image/Cyber Task.jpg" ,isFree:false ,discount :0 ,description:"Stealth action game with missions ",releaseDate:"2024" ,type:"Stealth" ,size:"45 GB"},
+            { id :23,title :"Apex Legends ", priceUSD :0 ,category :"free ",tags:["Free","Battle Royale","FPS"] ,image :"image/Apex Legends.jpg" ,isFree:true ,discount :0 ,description :"Fast-paced battle royale shooter with unique legends ",releaseDate :"2019" ,type :"Battle Royale FPS ",size :"60 GB"},
+            { id: 24, title: "Fortnite", priceUSD: 0, category: "free", tags: ["Free", "Battle Royale", "Multiplayer"], image: "image/Fortnite.jpg",isFree: true, discount: 0,description: "Multiplayer battle royale with building mechanics",releaseDate: "2017",type: "Battle Royale",size: "45 GB"}
+        ];
+
+        // Convert USD to INR (using approximate rate: 1 USD = 83 INR)
+        function usdToInr(usdPrice) {
+            return Math.round(usdPrice * 83);
+        }
+
+        // App State
+        let currentUser = null;
+        let users = [];
+        let cart = [];
+        let library = [];
+        let selectedPaymentMethod = null;
+
+        // DOM Elements
+        const gameHub = document.getElementById('gameHub');
+        const userDisplay = document.getElementById('userDisplay');
+        const cartIcon = document.getElementById('cartIcon');
+        const libraryIcon = document.getElementById('libraryIcon');
+        const cartCount = document.querySelector('.cart-count');
+        const libraryCount = document.querySelector('.library-count');
+        const logoutButton = document.getElementById('logoutButton');
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        const pages = document.querySelectorAll('.page');
+        const storeSection = document.getElementById('storeSection');
+        const userSection = document.getElementById('userSection');
+        const authSection = document.getElementById('authSection');
+        const logo = document.getElementById('logo');
+        
+        // Tab Elements
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        
+        // Form Section Elements
+        const loginFormSection = document.getElementById('loginFormSection');
+        const registerFormSection = document.getElementById('registerFormSection');
+        
+        // Error Modal Elements
+        const errorModal = document.getElementById('errorModal');
+        const errorTitle = document.getElementById('errorTitle');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorClose = document.getElementById('errorClose');
+
+        // Initialize the app
+        function init() {
+            // Load users from localStorage
+            const savedUsers = localStorage.getItem('gameHubUsers');
+            if (savedUsers) {
+                users = JSON.parse(savedUsers);
+            }
+            
+            // Load current user from localStorage
+            const savedUser = localStorage.getItem('gameHubCurrentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadUserData();
+                updateUserInterface();
+                showPage('allGames');
+            }
+            
+            // Load cart from localStorage
+            const savedCart = localStorage.getItem('gameHubCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartCount();
+            }
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Render initial games if user is logged in
+            if (currentUser) {
+                renderAllGames();
+            }
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Login/Register
+            document.getElementById('loginBtn').addEventListener('click', login);
+            document.getElementById('registerBtn').addEventListener('click', register);
+            
+            // Tab Navigation
+            loginTab.addEventListener('click', () => showAuthTab('login'));
+            registerTab.addEventListener('click', () => showAuthTab('register'));
+            
+            // Navigation
+            logoutButton.addEventListener('click', logout);
+            cartIcon.addEventListener('click', () => showPage('cart'));
+            libraryIcon.addEventListener('click', () => showPage('library'));
+            logo.addEventListener('click', () => {
+                if (currentUser) showPage('allGames');
+                else showPage('login');
+            });
+            
+            // Checkout
+            document.getElementById('checkoutBtn').addEventListener('click', checkout);
+            
+            // Error Modal
+            errorClose.addEventListener('click', () => errorModal.style.display = 'none');
+            
+            // Sidebar navigation
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    if (!currentUser && item.dataset.page && item.dataset.page !== 'login') {
+                        showError('Authentication Required', 'Please login to access this section.');
+                        return;
+                    }
+                    if (item.dataset.page) {
+                        showPage(item.dataset.page);
+                    }
+                });
+            });
+            
+            // Switch between login and register
+            document.getElementById('switchToRegister').addEventListener('click', (e) => {
+                e.preventDefault();
+                showAuthTab('register');
+            });
+            
+            document.getElementById('switchToLogin').addEventListener('click', (e) => {
+                e.preventDefault();
+                showAuthTab('login');
+            });
+        }
+
+        // Show auth tab
+        function showAuthTab(tab) {
+            // Update active tab
+            [loginTab, registerTab].forEach(t => t.classList.remove('active'));
+            if (tab === 'login') loginTab.classList.add('active');
+            else if (tab === 'register') registerTab.classList.add('active');
+            
+            // Show corresponding form
+            loginFormSection.style.display = 'none';
+            registerFormSection.style.display = 'none';
+            
+            if (tab === 'login') loginFormSection.style.display = 'block';
+            else if (tab === 'register') registerFormSection.style.display = 'block';
+            
+            // Clear all forms
+            clearErrors();
+            clearForm('login');
+            clearForm('register');
+        }
+
+        // Clear form inputs
+        function clearForm(formType) {
+            if (formType === 'login') {
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+            } else if (formType === 'register') {
+                document.getElementById('registerName').value = '';
+                document.getElementById('registerEmail').value = '';
+                document.getElementById('registerPhone').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('registerConfirmPassword').value = '';
+            }
+        }
+
+        // Show error modal
+        function showError(title, message) {
+            errorTitle.textContent = title;
+            errorMessage.textContent = message;
+            errorModal.style.display = 'flex';
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            const container = document.getElementById('notificationContainer');
+            container.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Validate email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Validate phone
+        function validatePhone(phone) {
+            if (!phone) return true; // Phone is optional
+            const re = /^\d{10}$/;
+            return re.test(phone);
+        }
+
+        // NEW: Validate password with requirements (min 8 chars, 1 digit, 1 special)
+        function validatePassword(password) {
+            const errors = [];
+            if (password.length < 8) {
+                errors.push("Minimum 8 characters required");
+            }
+            if (!/\d/.test(password)) {
+                errors.push("At least one digit required");
+            }
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                errors.push("At least one special character required");
+            }
+            return errors;
+        }
+
+        // NEW: Luhn Algorithm for credit card validation
+        function validateLuhn(cardNumber) {
+            // Remove spaces and non-digit characters
+            cardNumber = cardNumber.replace(/\D/g, '');
+            if (!cardNumber) return false;
+            
+            let sum = 0;
+            let alternate = false;
+            
+            for (let i = cardNumber.length - 1; i >= 0; i--) {
+                let digit = parseInt(cardNumber.charAt(i), 10);
+                
+                if (alternate) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit = (digit % 10) + 1;
+                    }
+                }
+                
+                sum += digit;
+                alternate = !alternate;
+            }
+            
+            return sum % 10 === 0;
+        }
+
+        // NEW: Validate UPI ID
+        function validateUPI(upiId) {
+            if (!upiId || !upiId.trim()) {
+                return { valid: false, message: "UPI ID is required" };
+            }
+            
+            upiId = upiId.trim();
+            
+            // Basic UPI ID format: username@provider
+            // Examples: example@okhdfcbank, user@okicici, name@ybl, phone@okhdfcbank
+            const upiRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/;
+            
+            if (!upiRegex.test(upiId)) {
+                return { valid: false, message: "Invalid UPI ID format. It should be like username@provider" };
+            }
+            
+            // Check minimum length after validation
+            if (upiId.length < 5) {
+                return { valid: false, message: "UPI ID is too short" };
+            }
+            
+            return { valid: true, message: "Valid UPI ID" };
+        }
+
+        // NEW: Validate expiry date (MM/YY format and future date)
+        function validateExpiryDate(expiry) {
+            if (!expiry || !expiry.trim()) {
+                return { valid: false, message: "Expiry date is required" };
+            }
+            
+            expiry = expiry.trim();
+            
+            // Check MM/YY format
+            const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+            if (!expiryRegex.test(expiry)) {
+                return { valid: false, message: "Invalid expiry date format. Use MM/YY" };
+            }
+            
+            const [month, year] = expiry.split('/');
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear() % 100; // Get last 2 digits
+            const currentMonth = currentDate.getMonth() + 1; // January is 0
+            
+            const expMonth = parseInt(month, 10);
+            const expYear = parseInt(year, 10);
+            
+            if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+                return { valid: false, message: "Card has expired" };
+            }
+            
+            return { valid: true, message: "Valid expiry date" };
+        }
+
+        // Clear all error messages
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+            document.querySelectorAll('.input-container input').forEach(input => {
+                input.classList.remove('input-error');
+            });
+        }
+
+        // Show error on input
+        function showInputError(inputId, message) {
+            const input = document.getElementById(inputId);
+            const error = document.getElementById(inputId + 'Error');
+            
+            input.classList.add('input-error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        // Login function
+        function login() {
+            clearErrors();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            
+            // Validation
+            if (!email) {
+                showInputError('loginEmail', 'Email or phone number is required');
+                return;
+            }
+            
+            if (!password) {
+                showInputError('loginPassword', 'Password is required');
+                return;
+            }
+            
+            // Find user
+            const user = users.find(u => 
+                (u.email === email || u.phone === email) && u.password === password
+            );
+            
+            if (!user) {
+                showError('Login Failed', 'Invalid email/phone or password. Please try again.');
+                return;
+            }
+            
+            // Set current user
+            currentUser = { ...user };
+            localStorage.setItem('gameHubCurrentUser', JSON.stringify(currentUser));
+            
+            // Load user's cart and library
+            loadUserData();
+            
+            // Update UI
+            updateUserInterface();
+            showPage('allGames');
+            
+            // Clear form
+            clearForm('login');
+            
+            showNotification('Login successful! Welcome back!', 'success');
+        }
+
+        // Register function - UPDATED with new password validation
+        function register() {
+            clearErrors();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+            const confirmPassword = document.getElementById('registerConfirmPassword').value.trim();
+            
+            let hasErrors = false;
+            
+            // Name validation
+            if (!name) {
+                showInputError('registerName', 'Full name is required');
+                hasErrors = true;
+            }
+            
+            // Email validation
+            if (!email) {
+                showInputError('registerEmail', 'Email is required');
+                hasErrors = true;
+            } else if (!validateEmail(email)) {
+                showInputError('registerEmail', 'Please enter a valid email address');
+                hasErrors = true;
+            } else if (users.some(u => u.email === email)) {
+                showInputError('registerEmail', 'Email is already registered');
+                hasErrors = true;
+            }
+            
+            // Phone validation
+            if (phone && !validatePhone(phone)) {
+                showInputError('registerPhone', 'Please enter a valid 10-digit phone number');
+                hasErrors = true;
+            } else if (phone && users.some(u => u.phone === phone)) {
+                showInputError('registerPhone', 'Phone number is already registered');
+                hasErrors = true;
+            }
+            
+            // NEW: Password validation with requirements
+            const passwordErrors = validatePassword(password);
+            if (!password) {
+                showInputError('registerPassword', 'Password is required');
+                hasErrors = true;
+            } else if (passwordErrors.length > 0) {
+                showInputError('registerPassword', passwordErrors.join(', '));
+                hasErrors = true;
+            }
+            
+            // Confirm password
+            if (!confirmPassword) {
+                showInputError('registerConfirmPassword', 'Please confirm your password');
+                hasErrors = true;
+            } else if (password !== confirmPassword) {
+                showInputError('registerConfirmPassword', 'Passwords do not match');
+                hasErrors = true;
+            }
+            
+            if (hasErrors) return;
+            
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                phone: phone || '',
+                password,
+                joined: new Date().toLocaleDateString(),
+                library: [],
+                cart: []
+            };
+            
+            // Save user
+            users.push(newUser);
+            localStorage.setItem('gameHubUsers', JSON.stringify(users));
+            
+            // Set as current user
+            currentUser = { ...newUser };
+            localStorage.setItem('gameHubCurrentUser', JSON.stringify(currentUser));
+            
+            // Update UI
+            updateUserInterface();
+            showPage('allGames');
+            
+            // Clear form
+            clearForm('register');
+            
+            showNotification('Registration successful! Welcome to Game Hub!', 'success');
+        }
+
+        // Load user data
+        function loadUserData() {
+            if (!currentUser) return;
+            
+            const user = users.find(u => u.id === currentUser.id);
+            if (user) {
+                cart = user.cart || [];
+                library = user.library || [];
+                updateCartCount();
+                updateLibraryCount();
+                saveUserData();
+            }
+        }
+
+        // Save user data
+        function saveUserData() {
+            if (!currentUser) return;
+            
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = {
+                    ...users[userIndex],
+                    cart: [...cart],
+                    library: [...library]
+                };
+                localStorage.setItem('gameHubUsers', JSON.stringify(users));
+                localStorage.setItem('gameHubCurrentUser', JSON.stringify(currentUser));
+            }
+            
+            localStorage.setItem('gameHubCart', JSON.stringify(cart));
+        }
+
+        // Update user interface
+        function updateUserInterface() {
+            if (currentUser) {
+                userDisplay.textContent = `Welcome, ${currentUser.name}!`;
+                logoutButton.style.display = 'block';
+                cartIcon.style.display = 'block';
+                libraryIcon.style.display = 'block';
+                storeSection.style.display = 'block';
+                userSection.style.display = 'block';
+                authSection.style.display = 'none';
+                updateCartCount();
+                updateLibraryCount();
+                renderAllGames();
+            } else {
+                userDisplay.textContent = 'Welcome to Game Hub!';
+                logoutButton.style.display = 'none';
+                cartIcon.style.display = 'none';
+                libraryIcon.style.display = 'none';
+                storeSection.style.display = 'none';
+                userSection.style.display = 'none';
+                authSection.style.display = 'block';
+                showPage('login');
+            }
+        }
+
+        // Show a specific page
+        function showPage(pageId) {
+            // Hide all pages
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(`${pageId}Page`).classList.add('active');
+            
+            // Update sidebar active item
+            sidebarItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.page === pageId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Update content based on page
+            switch(pageId) {
+                case 'allGames':
+                case 'freeGames':
+                case 'newGames':
+                case 'upcomingGames':
+                case 'discountGames':
+                    renderGames(pageId, document.getElementById(`${pageId}Grid`));
+                    break;
+                case 'cart':
+                    updateCartDisplay();
+                    break;
+                case 'library':
+                    updateLibraryDisplay();
+                    break;
+                case 'account':
+                    updateAccountDisplay();
+                    break;
+                case 'payment':
+                    updatePaymentDisplay();
+                    break;
+                case 'login':
+                    showAuthTab('login');
+                    break;
+            }
+        }
+
+        // Render all games initially
+        function renderAllGames() {
+            const pagesToRender = ['allGames', 'freeGames', 'newGames', 'upcomingGames', 'discountGames'];
+            pagesToRender.forEach(page => {
+                renderGames(page, document.getElementById(`${page}Grid`));
+            });
+        }
+
+        // Render games to a grid - UPDATED to include expandable details (Quick Info removed)
+        function renderGames(filter, gridElement) {
+            if (!gridElement) return;
+            
+            gridElement.innerHTML = '';
+            
+            let filteredGames = [];
+            
+            switch(filter) {
+                case 'allGames': filteredGames = games; break;
+                case 'freeGames': filteredGames = games.filter(game => game.isFree); break;
+                case 'newGames': filteredGames = games.filter(game => game.category === 'new'); break;
+                case 'upcomingGames': filteredGames = games.filter(game => game.category === 'upcoming'); break;
+                case 'discountGames': filteredGames = games.filter(game => game.discount > 0); break;
+                default: filteredGames = games;
+            }
+            
+            filteredGames.forEach(game => {
+                const isInCart = cart.some(item => item.id === game.id);
+                const isInLibrary = library.some(item => item.id === game.id);
+                const finalPriceUSD = game.discount > 0 ? 
+                    (game.priceUSD * (100 - game.discount) / 100) : 
+                    game.priceUSD;
+                
+                // Convert prices to INR
+                const originalPriceINR = usdToInr(game.priceUSD);
+                const finalPriceINR = usdToInr(finalPriceUSD);
+                
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.dataset.id = game.id;
+                
+                // Special handling for upcoming games - no Add to Cart button
+                const isUpcomingGame = game.category === 'upcoming';
+                
+                gameCard.innerHTML = `
+                    <div class="game-img" style="background: url('${game.image}') center/cover no-repeat;"></div>
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <div class="game-price ${game.isFree ? 'free' : ''}">
+                            ${game.isFree ? 'FREE' : 
+                              (game.discount > 0 ? 
+                                `<span style="text-decoration: line-through; color: var(--light-gray); margin-right: 10px;">₹${originalPriceINR}</span> ₹${finalPriceINR}` : 
+                                `₹${originalPriceINR}`)
+                            }
+                            ${game.discount > 0 ? `<span style="color: var(--danger); margin-left: 10px;">-${game.discount}%</span>` : ''}
+                        </div>
+                        <div class="game-tags">
+                            ${game.tags.map(tag => `<span class="game-tag ${tag.toLowerCase().replace(' ', '-')}">${tag}</span>`).join('')}
+                            ${isInLibrary ? '<span class="game-tag owned">Owned</span>' : ''}
+                        </div>
+                        
+                        ${isUpcomingGame ? '<div class="coming-soon">Coming Soon</div>' : ''}
+                        <div class="game-actions">
+                            ${isInLibrary ? 
+                                '<button class="btn btn-library view-game">Play Now</button>' :
+                                (isUpcomingGame ? 
+                                    '<button class="btn btn-disabled" disabled>Coming Soon</button>' :
+                                    `<button class="btn ${isInCart ? 'btn-disabled' : 'btn-primary'} add-to-cart">
+                                        ${isInCart ? 'In Cart' : (game.isFree ? 'Get Free' : 'Add to Cart')}
+                                    </button>`
+                                )
+                            }
+                        </div>
+                    </div>
+                `;
+                
+                gridElement.appendChild(gameCard);
+                
+                // Add event listeners
+                const addButton = gameCard.querySelector('.add-to-cart');
+                const viewButton = gameCard.querySelector('.view-game');
+                
+                if (addButton && !addButton.classList.contains('btn-disabled')) {
+                    addButton.addEventListener('click', () => addToCart(game.id));
+                }
+                
+                if (viewButton) {
+                    viewButton.addEventListener('click', () => playGame(game.id));
+                }
+            });
+        }
+
+        // Add game to cart - UPDATED to use INR
+        function addToCart(gameId) {
+            if (!currentUser) {
+                showError('Authentication Required', 'Please login to add games to cart.');
+                showPage('login');
+                return;
+            }
+            
+            const game = games.find(g => g.id === gameId);
+            if (!game) return;
+            
+            // Check if it's an upcoming game (shouldn't be possible to add, but just in case)
+            if (game.category === 'upcoming') {
+                showNotification('This game is coming soon and cannot be purchased yet.', 'warning');
+                return;
+            }
+            
+            // Check if already in library
+            if (library.some(item => item.id === gameId)) {
+                showNotification('You already own this game! Check your library.', 'info');
+                return;
+            }
+            
+            // Check if already in cart
+            if (cart.some(item => item.id === gameId)) {
+                showNotification('This game is already in your cart!', 'warning');
+                return;
+            }
+            
+            // Free games go directly to library
+            if (game.isFree) {
+                library.push({
+                    id: game.id,
+                    title: game.title,
+                    price: 0,
+                    image: game.image,
+                    purchasedAt: new Date().toISOString()
+                });
+                updateLibraryCount();
+                saveUserData();
+                showNotification(`${game.title} added to your library for FREE!`, 'success');
+                renderAllGames();
+                return;
+            }
+            
+            // Calculate price in INR
+            const finalPriceUSD = game.discount > 0 ? 
+                (game.priceUSD * (100 - game.discount) / 100) : 
+                game.priceUSD;
+            const priceINR = usdToInr(finalPriceUSD);
+            
+            // Add to cart with INR price
+            cart.push({
+                id: game.id,
+                title: game.title,
+                price: priceINR,
+                image: game.image
+            });
+            
+            updateCartCount();
+            saveUserData();
+            showNotification(`${game.title} added to cart!`, 'success');
+            renderAllGames();
+        }
+
+        // Remove item from cart
+        function removeFromCart(gameId) {
+            cart = cart.filter(item => item.id !== gameId);
+            updateCartCount();
+            updateCartDisplay();
+            saveUserData();
+            renderAllGames();
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            cartCount.textContent = cart.length;
+        }
+
+        // Update library count
+        function updateLibraryCount() {
+            libraryCount.textContent = library.length;
+        }
+
+        // Update cart display - UPDATED to use ₹
+        function updateCartDisplay() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartSummary = document.getElementById('cartSummary');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <i class="bi bi-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some games to get started!</p>
+                    </div>
+                `;
+                cartSummary.style.display = 'none';
+                return;
+            }
+            
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-img" style="background: url('${item.image}') center/cover no-repeat;"></div>
+                    <div class="cart-item-info">
+                        <div class="cart-item-title">${item.title}</div>
+                        <div class="cart-item-price">₹${item.price}</div>
+                    </div>
+                    <button class="remove-item" data-id="${item.id}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
+                
+                cartItemsContainer.appendChild(cartItem);
+                total += item.price;
+                
+                cartItem.querySelector('.remove-item').addEventListener('click', () => {
+                    removeFromCart(item.id);
+                });
+            });
+            
+            document.querySelector('.cart-total-amount').textContent = `₹${total}`;
+            cartSummary.style.display = 'block';
+        }
+
+        // Update library display
+        function updateLibraryDisplay() {
+            const libraryItemsContainer = document.getElementById('libraryItems');
+            const librarySummary = document.getElementById('librarySummary');
+            
+            if (library.length === 0) {
+                libraryItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <i class="bi bi-book"></i>
+                        <h3>Your library is empty</h3>
+                        <p>Purchase some games to build your collection!</p>
+                    </div>
+                `;
+                librarySummary.style.display = 'none';
+                return;
+            }
+            
+            libraryItemsContainer.innerHTML = '';
+            
+            library.forEach(item => {
+                const libraryItem = document.createElement('div');
+                libraryItem.className = 'library-item';
+                libraryItem.innerHTML = `
+                    <div class="library-item-img" style="background: url('${item.image}') center/cover no-repeat;"></div>
+                    <div class="library-item-info">
+                        <div class="library-item-title">${item.title}</div>
+                        <div class="library-item-price">Purchased on ${new Date(item.purchasedAt).toLocaleDateString()}</div>
+                    </div>
+                    <button class="btn btn-primary play-game" data-id="${item.id}">Play</button>
+                `;
+                
+                libraryItemsContainer.appendChild(libraryItem);
+                
+                libraryItem.querySelector('.play-game').addEventListener('click', () => {
+                    playGame(item.id);
+                });
+            });
+            
+            document.getElementById('libraryTotal').textContent = library.length;
+            librarySummary.style.display = 'block';
+        }
+
+        // Update account display
+        function updateAccountDisplay() {
+            const accountInfo = document.getElementById('accountInfo');
+            
+            if (!currentUser) {
+                accountInfo.innerHTML = '<p>Please login to view account information.</p>';
+                return;
+            }
+            
+            accountInfo.innerHTML = `
+                <div class="info-row">
+                    <div class="info-label">Name:</div>
+                    <div class="info-value">${currentUser.name}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Email:</div>
+                    <div class="info-value">${currentUser.email || 'Not provided'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Phone:</div>
+                    <div class="info-value">${currentUser.phone || 'Not provided'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Member Since:</div>
+                    <div class="info-value">${currentUser.joined || 'Recently'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Games Owned:</div>
+                    <div class="info-value">${library.length}</div>
+                </div>
+            `;
+        }
+
+        // Checkout function
+        function checkout() {
+            if (cart.length === 0) {
+                showError('Empty Cart', 'Your cart is empty. Add some games before checkout.');
+                return;
+            }
+            
+            if (!currentUser) {
+                showError('Authentication Required', 'Please login to proceed with checkout.');
+                showPage('login');
+                return;
+            }
+            
+            showPage('payment');
+        }
+
+        // Update payment display - UPDATED with proper validation
+        function updatePaymentDisplay() {
+            const paymentDetails = document.getElementById('paymentDetails');
+            const paymentMethods = document.getElementById('paymentMethods');
+            const paymentForm = document.getElementById('paymentForm');
+            
+            if (cart.length === 0) {
+                paymentDetails.innerHTML = `
+                    <div class="empty-message">
+                        <i class="bi bi-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some games to proceed to payment.</p>
+                    </div>
+                `;
+                paymentMethods.style.display = 'none';
+                paymentForm.style.display = 'none';
+                return;
+            }
+            
+            let total = 0;
+            cart.forEach(item => total += item.price);
+            
+            paymentDetails.innerHTML = `
+                <div class="cart-summary">
+                    <div class="cart-total">
+                        <span>Total Amount:</span>
+                        <span class="cart-total-amount">₹${total}</span>
+                    </div>
+                </div>
+            `;
+            
+            paymentMethods.style.display = 'flex';
+            paymentForm.style.display = 'none';
+            selectedPaymentMethod = null;
+            
+            paymentMethods.querySelectorAll('.payment-method').forEach(method => {
+                method.classList.remove('selected');
+                method.addEventListener('click', () => {
+                    paymentMethods.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                    method.classList.add('selected');
+                    selectedPaymentMethod = method.dataset.method;
+                    showPaymentForm(selectedPaymentMethod, total);
+                });
+            });
+        }
+
+        // Show payment form - UPDATED with enhanced validation
+        function showPaymentForm(method, total) {
+            const paymentForm = document.getElementById('paymentForm');
+            let formHTML = '';
+            
+            if (method === 'upi') {
+                formHTML = `
+                    <h3 style="color: var(--primary); margin-bottom: 1.5rem; text-align: center;">UPI Payment</h3>
+                    <div class="input-container" style="margin-bottom: 1.2rem;">
+                        <input type="text" id="upiId" placeholder="Enter UPI ID (e.g., username@okhdfcbank)" 
+                               style="width: 100%; padding: 0.75rem; background-color: var(--gray); border: 1px solid var(--light-gray); border-radius: 5px; color: var(--light);">
+                        <div id="upiValidationMessage" style="color: var(--light-gray); font-size: 0.85rem; margin-top: 0.3rem;"></div>
+                    </div>
+                    <button class="submit" id="confirmPaymentBtn" style="width: 100%;">Pay ₹${total}</button>
+                `;
+                
+                // Add UPI validation listener
+                setTimeout(() => {
+                    const upiInput = document.getElementById('upiId');
+                    const validationMsg = document.getElementById('upiValidationMessage');
+                    
+                    if (upiInput) {
+                        upiInput.addEventListener('input', function() {
+                            const validation = validateUPI(this.value);
+                            if (this.value.length > 0) {
+                                if (validation.valid) {
+                                    validationMsg.style.color = 'var(--success)';
+                                    validationMsg.textContent = '✓ Valid UPI ID';
+                                } else {
+                                    validationMsg.style.color = 'var(--danger)';
+                                    validationMsg.textContent = '✗ ' + validation.message;
+                                }
+                            } else {
+                                validationMsg.style.color = 'var(--light-gray)';
+                                validationMsg.textContent = 'Enter your UPI ID';
+                            }
+                        });
+                    }
+                }, 100);
+            } else {
+                formHTML = `
+                    <h3 style="color: var(--primary); margin-bottom: 1.5rem; text-align: center;">Card Payment</h3>
+                    <div class="input-container" style="margin-bottom: 1.2rem;">
+                        <input type="text" id="cardNumber" placeholder="Card Number" 
+                               style="width: 100%; padding: 0.75rem; background-color: var(--gray); border: 1px solid var(--light-gray); border-radius: 5px; color: var(--light);">
+                        <div id="cardValidationMessage" style="color: var(--light-gray); font-size: 0.85rem; margin-top: 0.3rem;"></div>
+                    </div>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1.2rem;">
+                        <div class="input-container" style="flex: 1; margin-bottom: 0;">
+                            <input type="text" id="expiryDate" placeholder="MM/YY" 
+                                   style="width: 100%; padding: 0.75rem; background-color: var(--gray); border: 1px solid var(--light-gray); border-radius: 5px; color: var(--light);">
+                            <div id="expiryValidationMessage" style="color: var(--light-gray); font-size: 0.85rem; margin-top: 0.3rem;"></div>
+                        </div>
+                        <div class="input-container" style="flex: 1; margin-bottom: 0;">
+                            <input type="text" id="cvv" placeholder="CVV" 
+                                   style="width: 100%; padding: 0.75rem; background-color: var(--gray); border: 1px solid var(--light-gray); border-radius: 5px; color: var(--light);">
+                            <div id="cvvValidationMessage" style="color: var(--light-gray); font-size: 0.85rem; margin-top: 0.3rem;"></div>
+                        </div>
+                    </div>
+                    <button class="submit" id="confirmPaymentBtn" style="width: 100%;">Pay ₹${total}</button>
+                `;
+                
+                // Add validation listeners
+                setTimeout(() => {
+                    const cardInput = document.getElementById('cardNumber');
+                    const expiryInput = document.getElementById('expiryDate');
+                    const cvvInput = document.getElementById('cvv');
+                    
+                    if (cardInput) {
+                        cardInput.addEventListener('input', function() {
+                            const validationMsg = document.getElementById('cardValidationMessage');
+                            if (this.value.length > 0) {
+                                if (validateLuhn(this.value)) {
+                                    validationMsg.style.color = 'var(--success)';
+                                    validationMsg.textContent = '✓ Valid card number';
+                                } else {
+                                    validationMsg.style.color = 'var(--danger)';
+                                    validationMsg.textContent = '✗ Invalid card number';
+                                }
+                            } else {
+                                validationMsg.style.color = 'var(--light-gray)';
+                                validationMsg.textContent = 'Enter card number';
+                            }
+                        });
+                    }
+                    
+                    if (expiryInput) {
+                        expiryInput.addEventListener('input', function() {
+                            const validationMsg = document.getElementById('expiryValidationMessage');
+                            if (this.value.length > 0) {
+                                const validation = validateExpiryDate(this.value);
+                                if (validation.valid) {
+                                    validationMsg.style.color = 'var(--success)';
+                                    validationMsg.textContent = '✓ Valid expiry date';
+                                } else {
+                                    validationMsg.style.color = 'var(--danger)';
+                                    validationMsg.textContent = '✗ ' + validation.message;
+                                }
+                            } else {
+                                validationMsg.style.color = 'var(--light-gray)';
+                                validationMsg.textContent = 'Enter MM/YY';
+                            }
+                        });
+                    }
+                    
+                    if (cvvInput) {
+                        cvvInput.addEventListener('input', function() {
+                            const validationMsg = document.getElementById('cvvValidationMessage');
+                            if (this.value.length > 0) {
+                                if (/^\d{3,4}$/.test(this.value)) {
+                                    validationMsg.style.color = 'var(--success)';
+                                    validationMsg.textContent = '✓ Valid CVV';
+                                } else {
+                                    validationMsg.style.color = 'var(--danger)';
+                                    validationMsg.textContent = '✗ CVV must be 3 or 4 digits';
+                                }
+                            } else {
+                                validationMsg.style.color = 'var(--light-gray)';
+                                validationMsg.textContent = 'Enter CVV';
+                            }
+                        });
+                    }
+                }, 100);
+            }
+            
+            paymentForm.innerHTML = formHTML;
+            paymentForm.style.display = 'block';
+            
+            setTimeout(() => {
+                const confirmBtn = document.getElementById('confirmPaymentBtn');
+                if (confirmBtn) {
+                    confirmBtn.addEventListener('click', completePurchase);
+                }
+            }, 100);
+        }
+
+        // Complete purchase - UPDATED with comprehensive validation for all payment methods
+        function completePurchase() {
+            if (!selectedPaymentMethod) {
+                showError('Payment Method', 'Please select a payment method.');
+                return;
+            }
+            
+            let total = 0;
+            cart.forEach(item => total += item.price);
+            
+            // Validate based on payment method
+            if (selectedPaymentMethod === 'credit') {
+                const cardNumber = document.getElementById('cardNumber')?.value;
+                const expiryDate = document.getElementById('expiryDate')?.value;
+                const cvv = document.getElementById('cvv')?.value;
+                
+                // Validate card number
+                if (!cardNumber || !cardNumber.trim()) {
+                    showError('Invalid Card', 'Please enter your card number.');
+                    return;
+                }
+                if (!validateLuhn(cardNumber)) {
+                    showError('Invalid Card', 'Please enter a valid card number.');
+                    return;
+                }
+                
+                // Validate expiry date
+                if (!expiryDate || !expiryDate.trim()) {
+                    showError('Invalid Expiry Date', 'Please enter the expiry date (MM/YY).');
+                    return;
+                }
+                const expiryValidation = validateExpiryDate(expiryDate);
+                if (!expiryValidation.valid) {
+                    showError('Invalid Expiry Date', expiryValidation.message);
+                    return;
+                }
+                
+                // Validate CVV
+                if (!cvv || !cvv.trim()) {
+                    showError('Invalid CVV', 'Please enter the CVV code.');
+                    return;
+                }
+                if (!/^\d{3,4}$/.test(cvv)) {
+                    showError('Invalid CVV', 'CVV must be 3 or 4 digits.');
+                    return;
+                }
+            } 
+            else if (selectedPaymentMethod === 'upi') {
+                const upiId = document.getElementById('upiId')?.value;
+                
+                // Validate UPI ID
+                const upiValidation = validateUPI(upiId);
+                if (!upiValidation.valid) {
+                    showError('Invalid UPI ID', upiValidation.message);
+                    return;
+                }
+            }
+            
+            // Add games to library
+            cart.forEach(item => {
+                library.push({
+                    ...item,
+                    purchasedAt: new Date().toISOString()
+                });
+            });
+            
+            // Clear cart
+            cart = [];
+            
+            // Update UI
+            updateCartCount();
+            updateLibraryCount();
+            saveUserData();
+            
+            // Show success
+            setTimeout(() => {
+                showNotification(`Purchase successful! ${library.length} game(s) added to your library.`, 'success');
+                showPage('library');
+                renderAllGames();
+            }, 1000);
+        }
+
+        // Play game
+        function playGame(gameId) {
+            const game = games.find(g => g.id === gameId);
+            if (!game) return;
+            
+            showNotification(`Starting ${game.title}... Enjoy your game!`, 'info');
+            // In a real app, this would launch the game
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('gameHubCurrentUser');
+            cart = [];
+            library = [];
+            updateCartCount();
+            updateLibraryCount();
+            updateUserInterface();
+            showNotification('Logged out successfully!', 'success');
+        }
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
